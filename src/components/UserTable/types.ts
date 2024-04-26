@@ -1,7 +1,7 @@
 export interface User {
   name: string
-  answersCount: number
-  validAnswersCount: number
+  allAnswers: number
+  correctAnswers: number
 }
 
 export interface UserTableProps {

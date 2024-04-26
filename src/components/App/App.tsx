@@ -9,27 +9,20 @@ import {
   DocumentReferenceIcon,
   DocumentForChecksIcon,
   DocumentCheckedIcon,
+  DocumentErrorIcon,
 } from "@/components/Icons";
+import {getUserChecks} from "@/api/checks/checks.ts";
 
 export const App: React.FunctionComponent = () => {
   const [referenceDocuments, setReferenceDocuments] = useState<File[]>([])
   const [documentsForChecks, setDocumentsForChecks] = useState<File[]>([])
-  // const [users, setUsers] = useState<User[]>([])
+  const [users, setUsers] = useState<User[]>([])
 
   const [isUploadingDocuments, setIsUploadingDocuments] = useState(true)
   const [isPending, setIsPending] = useState(false)
+  const [isError, setIsError] = useState(false)
 
   const isCheckDocumentButtonDisabled = !referenceDocuments.length || !documentsForChecks.length
-
-  const users: User[] = [
-    {name: 'ABO', answersCount: 4, validAnswersCount: 1},
-    {name: 'ABO', answersCount: 4, validAnswersCount: 1},
-    {name: 'ABO', answersCount: 4, validAnswersCount: 1},
-    {name: 'ABO', answersCount: 4, validAnswersCount: 1},
-    {name: 'ABO', answersCount: 4, validAnswersCount: 1},
-    {name: 'ABO', answersCount: 4, validAnswersCount: 1},
-    {name: 'ABO', answersCount: 4, validAnswersCount: 1},
-  ]
 
   const onChangeReferenceDocuments = (files: File[]) => {
     setReferenceDocuments((prevState) => [...prevState, ...files])
@@ -47,13 +40,21 @@ export const App: React.FunctionComponent = () => {
     setDocumentsForChecks(documentsForChecks.filter((_, i) => i !== index))
   }
 
-  const onCheckDocuments = () => {
+  const onCheckDocuments = async () => {
     setIsUploadingDocuments(false)
     setIsPending(true)
 
-    setTimeout(() => {
-      setIsPending(false)
-    }, 1000)
+    try {
+      const user = await getUserChecks({
+        file_teacher: referenceDocuments[0],
+        file_student: documentsForChecks[0],
+      })
+      setUsers([user])
+    } catch (e) {
+      setIsError(true)
+    }
+
+    setIsPending(false)
   }
 
   const onStartCheck = () => {
@@ -108,7 +109,7 @@ export const App: React.FunctionComponent = () => {
           Шаг 2 из 3
         </p>
         <div className='flex flex-col gap-y-4 items-center'>
-          <DocumentForChecksIcon/>
+          <DocumentForChecksIcon />
           <p className='text-4xl text-blue-800'>
             Загрузите сканы на проверку
           </p>
@@ -116,7 +117,7 @@ export const App: React.FunctionComponent = () => {
             Это сканы, которые вы хотите сверить с эталонными
           </p>
           <FileInput
-            multiple={true}
+            multiple={false}
             onInputFiles={onChangeDocumentsForChecks}
           />
           {
@@ -155,10 +156,10 @@ export const App: React.FunctionComponent = () => {
             </p>
             <div className='flex flex-col gap-y-4 items-center'>
               <div className='flex justify-center items-center'>
-                {isPending ? <Spinner/> : <DocumentCheckedIcon />}
+                {isPending ? <Spinner /> : isError ? <DocumentErrorIcon /> : <DocumentCheckedIcon />}
               </div>
               <p className='text-4xl text-blue-800'>
-                {isPending ? 'Ожидайте, идет проверка файлов...' : 'Файл проверен!'}
+                {isPending ? 'Ожидайте, идет проверка файлов...' : isError ? 'Файл не проверен!' : 'Файл проверен!'}
               </p>
               {
                 isPending &&

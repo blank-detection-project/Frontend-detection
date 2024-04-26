@@ -66,16 +66,22 @@ export const FileInput: React.FunctionComponent<FileInputProps> = (props: FileIn
       return
     }
 
+    event.preventDefault()
     const files = [...event.dataTransfer.files].filter((file) => VALID_TYPES.includes(file.type))
+    setIsDropZoneHover(false)
     onInputFiles(files)
   }
 
-  const handleDragLeave = () => {
+  const handleDragLeave = (event: DragEvent) => {
     if (disabled) {
       return
     }
 
     if (!dropZone.current) {
+      return
+    }
+
+    if (dropZone.current.contains(event.relatedTarget as Node)) {
       return
     }
 
