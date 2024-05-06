@@ -28,6 +28,7 @@ export const FileInput: React.FunctionComponent<FileInputProps> = (props: FileIn
     label = 'Выбрать файл',
     disabled = false,
     multiple = false,
+    types = 'images',
     onInputFiles,
   } = props;
 
@@ -121,7 +122,13 @@ export const FileInput: React.FunctionComponent<FileInputProps> = (props: FileIn
         </label>
       </div>
       <p className='text-sm text-gray-800 text-center'>
-        Выберите или перетащите файл в форматах .png, .jpeg, .jpg
+        {
+          types === 'images'
+            ? 'Выберите или перетащите файл в форматах .png, .jpeg, .jpg'
+            : types === 'pdf'
+              ? 'Выберите или перетащите файл в формате pdf'
+              : 'Выберите или перетащите файл в форматах .png, .jpeg, .jpg'
+        }
       </p>
     </article>
   )

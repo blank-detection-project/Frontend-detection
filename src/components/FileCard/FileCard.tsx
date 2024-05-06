@@ -1,6 +1,7 @@
 import React from "react";
 import {XIcon} from "@/components/Icons";
 import {FileCardProps} from "@/components/FileCard/types.ts";
+import {PDFIcon} from "@/components/Icons";
 
 export const FileCard: React.FunctionComponent<FileCardProps> = (props: FileCardProps) => {
   const {
@@ -8,7 +9,7 @@ export const FileCard: React.FunctionComponent<FileCardProps> = (props: FileCard
     onRemove,
   } = props;
 
-  const normalizeImageURL = URL.createObjectURL(file)
+  const normalizeDocumentIcon = () => URL.createObjectURL(file)
 
   const getFileSize = (fileSize: number) => {
     const sizeInKb = fileSize / 1024;
@@ -24,7 +25,12 @@ export const FileCard: React.FunctionComponent<FileCardProps> = (props: FileCard
     <article className='w-full flex justify-between align-center'>
       <div className='flex align-center gap-x-3'>
         <div className='w-20 h-20'>
-          <img src={normalizeImageURL} alt={file.name} className='w-full h-full' />
+          {
+            file.type === 'application/pdf' ?
+              <PDFIcon /> :
+              <img src={normalizeDocumentIcon()} alt={file.name} className='w-full h-full'/>
+          }
+
         </div>
         <div className='flex flex-col justify-between items-start'>
           <span className='text-xl text-blue-800'>

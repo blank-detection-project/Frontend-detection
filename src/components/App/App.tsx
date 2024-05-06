@@ -2,8 +2,6 @@ import React, {useState} from "react";
 import {FileInput} from "@/components/FileInput/FileInput.tsx";
 import {FileCard} from "@/components/FileCard/FileCard.tsx";
 import {Spinner} from "@/components/Spinner/Spinner.tsx";
-import {User} from "@/components/UserTable/types.ts";
-import {UserTable} from "@/components/UserTable/UserTable.tsx";
 import {Button} from "@/components/Button/Button.tsx";
 import {
   DocumentReferenceIcon,
@@ -11,12 +9,11 @@ import {
   DocumentCheckedIcon,
   DocumentErrorIcon,
 } from "@/components/Icons";
-import {getUserChecks} from "@/api/checks/checks.ts";
+import {getUserExcelChecks} from "@/api/checks/checks.ts";
 
 export const App: React.FunctionComponent = () => {
   const [referenceDocuments, setReferenceDocuments] = useState<File[]>([])
   const [documentsForChecks, setDocumentsForChecks] = useState<File[]>([])
-  const [users, setUsers] = useState<User[]>([])
 
   const [isUploadingDocuments, setIsUploadingDocuments] = useState(true)
   const [isPending, setIsPending] = useState(false)
@@ -45,11 +42,18 @@ export const App: React.FunctionComponent = () => {
     setIsPending(true)
 
     try {
-      const user = await getUserChecks({
+      const usersExcel = await getUserExcelChecks({
         file_teacher: referenceDocuments[0],
         file_student: documentsForChecks[0],
       })
-      setUsers([user])
+
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(usersExcel);
+      link.download = 'ПРОВЕРКА СТУДЕНТОВ';
+
+      document.body.appendChild(link);
+      link.click()
+      document.body.removeChild(link);
     } catch (e) {
       setIsError(true)
     }
@@ -62,10 +66,8 @@ export const App: React.FunctionComponent = () => {
     setDocumentsForChecks([])
     setIsUploadingDocuments(true)
 
-    scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    })
+    window.scrollTo(0, 0)
+    location.reload()
   }
 
   return (
@@ -119,6 +121,7 @@ export const App: React.FunctionComponent = () => {
           <FileInput
             multiple={false}
             onInputFiles={onChangeDocumentsForChecks}
+            types={'pdf'}
           />
           {
             !!documentsForChecks.length &&
@@ -167,7 +170,12 @@ export const App: React.FunctionComponent = () => {
                   Не закрывайте эту страницу!
                 </p>
               }
-              {!isPending && <UserTable users={users}/>}
+              {
+                !isPending && !isError &&
+                <p className='text-gray-600 text-center'>
+                  Скачивание Excel файла начнется автоматически
+                </p>
+              }
               {
                 !isPending &&
                 <Button

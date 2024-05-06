@@ -22,3 +22,19 @@ export async function getUserChecks(payload: GetUserChecksPayload): Promise<User
 
   return data
 }
+
+export async function getUserExcelChecks(payload: GetUserChecksPayload): Promise<Blob> {
+  const formData = new FormData();
+  formData.append('file_teacher', payload.file_teacher, payload.file_teacher.name);
+  formData.append('pdf_students', payload.file_student, payload.file_student.name);
+
+  const {data} = await instance.post<Blob>(
+    '/blanks_pdf',
+    formData,
+    {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      responseType: 'blob'
+    })
+
+  return data
+}
