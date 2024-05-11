@@ -49,7 +49,7 @@ export const App: React.FunctionComponent = () => {
 
       const link = document.createElement('a');
       link.href = URL.createObjectURL(usersExcel);
-      link.download = 'ПРОВЕРКА СТУДЕНТОВ';
+      link.download = documentsForChecks[0].name;
 
       document.body.appendChild(link);
       link.click()
