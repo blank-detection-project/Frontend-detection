@@ -88,6 +88,7 @@ export const App: React.FunctionComponent = () => {
           <FileInput
             multiple={false}
             onInputFiles={onChangeReferenceDocuments}
+            types={['image/png', 'image/jpg', 'image/jpeg']}
           />
           {
             !!referenceDocuments.length &&
@@ -121,7 +122,7 @@ export const App: React.FunctionComponent = () => {
           <FileInput
             multiple={false}
             onInputFiles={onChangeDocumentsForChecks}
-            types={'pdf'}
+            types={['application/pdf']}
           />
           {
             !!documentsForChecks.length &&

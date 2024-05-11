@@ -15,9 +15,7 @@ export async function getUserChecks(payload: GetUserChecksPayload): Promise<User
     '/blank',
     formData,
     {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+      headers: { 'Content-Type': 'multipart/form-data' }
     })
 
   return data

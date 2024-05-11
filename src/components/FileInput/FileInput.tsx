@@ -1,14 +1,26 @@
 import React, {DragEvent, ChangeEvent, useId, useRef, useState} from "react";
 import {FileInputProps} from "./types.ts";
-import {VALID_TYPES} from "./constants.ts";
 import {DocumentGrayIcon} from "@/components/Icons";
 
 export const FileInput: React.FunctionComponent<FileInputProps> = (props: FileInputProps) => {
+  const {
+    label = 'Выбрать файл',
+    disabled = false,
+    multiple = false,
+    types = [],
+    onInputFiles,
+  } = props;
+
   const id = useId()
   const dropZone = useRef<HTMLDivElement>(null)
   const [isDropZoneHover, setIsDropZoneHover] = useState<boolean>(false)
 
-  const acceptTypes = VALID_TYPES.join(', ')
+  const acceptTypes = types.join(', ')
+  const acceptTypesString = types
+    .map((type) => type.split('/')[1])
+    .map((type) => `.${type}`)
+    .join(', ')
+
   const dropZoneClassName = [
     'w-full',
     'py-24',
@@ -23,14 +35,6 @@ export const FileInput: React.FunctionComponent<FileInputProps> = (props: FileIn
     'rounded-sm',
     'transition',
   ].join(' ')
-
-  const {
-    label = 'Выбрать файл',
-    disabled = false,
-    multiple = false,
-    types = 'images',
-    onInputFiles,
-  } = props;
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -68,7 +72,7 @@ export const FileInput: React.FunctionComponent<FileInputProps> = (props: FileIn
     }
 
     event.preventDefault()
-    const files = [...event.dataTransfer.files].filter((file) => VALID_TYPES.includes(file.type))
+    const files = [...event.dataTransfer.files].filter((file) => types.includes(file.type))
     setIsDropZoneHover(false)
     onInputFiles(files)
   }
@@ -121,15 +125,16 @@ export const FileInput: React.FunctionComponent<FileInputProps> = (props: FileIn
           {label}
         </label>
       </div>
-      <p className='text-sm text-gray-800 text-center'>
-        {
-          types === 'images'
-            ? 'Выберите или перетащите файл в форматах .png, .jpeg, .jpg'
-            : types === 'pdf'
-              ? 'Выберите или перетащите файл в формате pdf'
-              : 'Выберите или перетащите файл в форматах .png, .jpeg, .jpg'
-        }
-      </p>
+      {
+        !!acceptTypes.length &&
+        <p className='text-sm text-gray-800 text-center'>
+          {
+            types.length > 1 ?
+              `Выберите или перетащите файл в форматах ${acceptTypesString}` :
+              `Выберите или перетащите файл в формате ${acceptTypesString}`
+          }
+        </p>
+      }
     </article>
   )
 }

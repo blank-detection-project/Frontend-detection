@@ -30,7 +30,6 @@ export const FileCard: React.FunctionComponent<FileCardProps> = (props: FileCard
               <PDFIcon /> :
               <img src={normalizeDocumentIcon()} alt={file.name} className='w-full h-full'/>
           }
-
         </div>
         <div className='flex flex-col justify-between items-start'>
           <span className='text-xl text-blue-800'>
