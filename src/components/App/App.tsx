@@ -49,7 +49,7 @@ export const App: React.FunctionComponent = () => {
 
       const link = document.createElement('a');
       link.href = URL.createObjectURL(usersExcel);
-      link.download = documentsForChecks[0].name;
+      link.download = documentsForChecks[0].name.replace(/\.[^/.]+$/, '');
 
       document.body.appendChild(link);
       link.click()
